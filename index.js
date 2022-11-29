@@ -9,7 +9,6 @@ const port = 8080;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
 
 
 app.use('/api/productos', productRouter);
@@ -22,9 +21,6 @@ app.use((req, res) => {
   });
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname + '/static/index.html'));
-})
 
 app.listen(port, () => {
   console.log(`RUN http://localhost:${port}`);

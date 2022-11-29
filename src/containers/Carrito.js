@@ -2,7 +2,7 @@ const fs=require('fs');
 
 
 class Carrito {
-    constructor() {
+    constructor(nombreArchivo) {
         this.nombreArchivo = nombreArchivo;
         this.id = 0;
     }
@@ -17,6 +17,17 @@ class Carrito {
         }
     }
 
+    getCarritos() {
+        let array = fs.readFileSync(this.nombreArchivo, 'utf-8');
+
+        if (array.length === 0) {
+            return [];
+        } else {
+            return JSON.parse(array); 
+        }
+        
+    }
+
     getLastId(){
         let array = this.getCarritos();
         if (array.length === 0) {
@@ -28,38 +39,50 @@ class Carrito {
     
     getCarritoById = (id) => {
 
-        let array = this.getCarritos();
-        let objeto = array.find(objeto => objeto.id === id);
-        return JSON.parse(objeto);
+        let arrayCarritos = this.getCarritos();
 
-    }
-    
-    getCarritos() {
-        let array = fs.readFileSync(this.nombreArchivo, 'utf-8');
-        if (array.length === 0) {
-            return [];
-        } else {
-            return JSON.parse(array);
-        }
+        let carrito = arrayCarritos.find(carrito => carrito.id === parseInt(id));
+        console.log(carrito);
+        return carrito;
     }
 
     getProductosCarrito = (id) => {
-        const carrito = obtenerCarrito(id);
+        let carrito = this.getCarritoById(id);
+        console.log(carrito);
         if(carrito === undefined) {
-            return JSON.parse({error: 'carrito no encontrado'});
+            return {error: 'Carrito no encontrado'};
         } else {
-            return JSON.parse(carrito.productos);
+            return carrito.productos;
         }
     }
 
-    postProductoCarrito = (idCarrito, idProducto) => {
-        const carrito = obtenerCarrito(idCarrito);
-        const producto = obtenerProducto(idProducto);
-        if(carrito === undefined || producto === undefined) {
-            return JSON.parse({error: 'carrito o producto no encontrado'});
+    validateProductoCarrito = (carrito, producto) => {
+
+        const productoCarrito = carrito?.productos?.find(productoCarrito => productoCarrito.id === producto.id);
+        if(productoCarrito === undefined) {
+            return false;
+        } 
+        
+        return true;
+        
+    }
+
+    postProductoCarrito = (idCarrito, producto) => {
+        let arrayCarritos = this.getCarritos();
+        let carrito = arrayCarritos.find(carrito => carrito.id === parseInt(idCarrito));
+        if(carrito === undefined) {
+            return {error: 'Carrito no encontrado'};
         } else {
+
+            if(this.validateProductoCarrito(carrito, producto)) {
+                return {error: 'El producto ya existe en el carrito'};
+            }
+
             carrito.productos.push(producto);
-            return JSON.parse(true);
+            let indice = arrayCarritos.indexOf(carrito);
+            arrayCarritos[indice] = carrito;
+            fs.writeFileSync(this.nombreArchivo, JSON.stringify(arrayCarritos, null, 2));
+            return true;
         }
     }
 
@@ -72,33 +95,40 @@ class Carrito {
         let array = this.getCarritos();
         array.push(newCarrito);
         fs.writeFileSync(this.nombreArchivo, JSON.stringify(array, null, 2));
-        return JSON.parse(newCarrito.id);
+        return newCarrito;
     }
 
     deleteProductoCarrito = (idCarrito, idProducto) => {
-        const carrito = obtenerCarrito(idCarrito);
+        let arrayCarritos = this.getCarritos();
+        let carrito = arrayCarritos.find(carrito => carrito.id === parseInt(idCarrito));
         if(carrito === undefined) {
-            return JSON.parse({error: 'carrito no encontrado'});
+            return {error: 'Carrito no encontrado'};
         } else {
-            const producto = obtenerProducto(idProducto);
+            const producto = carrito.productos.find(producto => producto.id === parseInt(idProducto));
             if(producto === undefined) {
-                return JSON.parse({error: 'producto no encontrado'});
+                return {error: 'Producto no encontrado en el carrito'};
             } else {
                 const index = carrito.productos.indexOf(producto);
                 carrito.productos.splice(index, 1);
-                return JSON.parse(true);
+                let indice = arrayCarritos.indexOf(carrito);
+                arrayCarritos[indice] = carrito;
+                fs.writeFileSync(this.nombreArchivo, JSON.stringify(arrayCarritos, null, 2));
+                return true;
             }
         }
     }
 
+    
     deleteCarrito = (id) => {
-        const carrito = obtenerCarrito(id);
+        let arrayCarritos = this.getCarritos();
+        let carrito = arrayCarritos.find(carrito => carrito.id === parseInt(id));
         if(carrito === undefined) {
-            return JSON.parse({error: 'carrito no encontrado'});
+            return {error: 'Carrito no encontrado'};
         } else {
-            const index = database.indexOf(carrito);
-            database.splice(index, 1);
-            return JSON.parse(true);
+            const index = arrayCarritos.indexOf(carrito);
+            arrayCarritos.splice(index, 1);
+            fs.writeFileSync(this.nombreArchivo, JSON.stringify(arrayCarritos, null, 2));
+            return true;
         }
     }
     

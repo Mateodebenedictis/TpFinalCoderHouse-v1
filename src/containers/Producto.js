@@ -2,7 +2,7 @@ const fs=require('fs');
 
 
 class Producto {
-    constructor() {
+    constructor(nombreArchivo) {
         this.nombreArchivo = nombreArchivo;
         this.id = 0;
     }
@@ -17,7 +17,17 @@ class Producto {
         }
     }
 
-    getLastId(){
+    getProductos() {
+        let array = fs.readFileSync(this.nombreArchivo, 'utf-8');
+        console.log(typeof array);
+        if (array.length === 0) {
+            return [];
+        } else {
+            return JSON.parse(array); 
+        }
+    }
+
+    getLastId(){ 
         let array = this.getProductos();
         if (array.length === 0) {
             return 0;
@@ -29,73 +39,66 @@ class Producto {
     getProductoById(id) {
 
         let array = this.getProductos();
-        let objeto = array.find(objeto => objeto.id === id);
-        return JSON.parse(objeto);
+        let objeto = array.find(objeto => objeto.id === parseInt(id));
 
-    }
-    
-    getProductos() {
-        let array = fs.readFileSync(this.nombreArchivo, 'utf-8');
-        if (array.length === 0) {
-            return [];
-        } else {
-            return JSON.parse(array);
-        }
+        if (objeto === undefined) {
+            return {error : 'producto no encontrado'};
+        } 
+
+        return objeto;
     }
 
-    save(objeto) {
+    postProducto(objeto) {
         let array = this.getProductos();
         this.id = this.getLastId() + 1;
         objeto.id = this.id;
         objeto.timestamp = Date.now();
         array.push(objeto);
         fs.writeFileSync(this.nombreArchivo, JSON.stringify(array, null, 2));
-        return JSON.parse(objeto);
+        return objeto;
     }
 
 
-    updateById(id, objeto) {
+    putProducto(id, objeto) {
 
         let array = this.getProductos();
 
         try {
 
-            let objetoActualizado = array.find(objeto => objeto.id === id);
+            let objetoActualizado = array.find(objeto => objeto.id === parseInt(id));
 
             if (objetoActualizado === undefined) {
 
-                return JSON.parse({error: 'Producto no encontrado'});
+                return {error: 'Producto no encontrado'};
 
             } else {
 
                 let indice = array.indexOf(objetoActualizado);
-                objeto.id = id;
+                objeto.id = parseInt(id);
                 objeto.timestamp = Date.now();
                 array[indice] = objeto;
                 fs.writeFileSync(this.nombreArchivo, JSON.stringify(array, null, 2));
-                return JSON.parse(objeto);
+                return objeto;
 
             }
         }
         catch (error) {
-            console.log(error);
-            console.log('No se pudo actualizar el objeto con ese ID');
-            return JSON.parse({error: 'No se pudo actualizar el objeto con ese ID'});
+            return {error: 'No se pudo actualizar el objeto con ese ID'};
         }
     }
 
-    deleteById(id) {
+    deleteProducto(id) {
         let array = this.getProductos();
-        let objeto = array.find(objeto => objeto.id === id);
+        let objeto = array.find(objeto => objeto.id === parseInt(id));
 
         if (objeto === undefined) {
-            return JSON.parse({error: 'No se pudo borrar el objeto con ese ID'});
+            return {error: 'No se pudo borrar el objeto con ese ID'};
         } else {
 
             let indice = array.indexOf(objeto);
             array.splice(indice, 1);
             fs.writeFileSync(this.nombreArchivo, JSON.stringify(array, null, 2));
-            return JSON.parse(objeto);
+            return objeto;
         }
     }
     
