@@ -42,7 +42,7 @@ class Carrito {
         let arrayCarritos = this.getCarritos();
 
         let carrito = arrayCarritos.find(carrito => carrito.id === parseInt(id));
-        console.log(carrito);
+
         return carrito;
     }
 
@@ -68,10 +68,14 @@ class Carrito {
     }
 
     postProductoCarrito = (idCarrito, producto) => {
+
         let arrayCarritos = this.getCarritos();
         let carrito = arrayCarritos.find(carrito => carrito.id === parseInt(idCarrito));
+
         if(carrito === undefined) {
+
             return {error: 'Carrito no encontrado'};
+            
         } else {
 
             if(this.validateProductoCarrito(carrito, producto)) {

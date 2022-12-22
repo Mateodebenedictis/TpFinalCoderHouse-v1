@@ -1,0 +1,1 @@
+mongo "mongodb+srv://coderhouse.zwimx1t.mongodb.net/coderhouse" --username final-coderhouse --password coderhouse

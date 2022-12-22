@@ -19,7 +19,7 @@ class Producto {
 
     getProductos() {
         let array = fs.readFileSync(this.nombreArchivo, 'utf-8');
-        console.log(typeof array);
+
         if (array.length === 0) {
             return [];
         } else {
@@ -39,6 +39,7 @@ class Producto {
     getProductoById(id) {
 
         let array = this.getProductos();
+        
         let objeto = array.find(objeto => objeto.id === parseInt(id));
 
         if (objeto === undefined) {
