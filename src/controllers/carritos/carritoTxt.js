@@ -1,5 +1,5 @@
-const Carrito = require('../containers/Carrito');
-const Producto = require('../containers/Producto');
+const Carrito = require('../../containers/Carrito');
+const Producto = require('../../containers/Producto');
 
 
 const contenedorCarrito = new Carrito('carritos.txt');

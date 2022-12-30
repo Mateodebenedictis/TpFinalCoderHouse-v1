@@ -1,4 +1,4 @@
-const FirebaseContainer = require('../../containers/firebase/FirebaseContainer');
+const FirebaseContainer = require('../../containers/FirebaseContainer');
 
 const Producto = new FirebaseContainer();
 
@@ -30,14 +30,13 @@ const getProducto = (req, res) => {
 const postProducto = (req, res) => {
 
     const newProducto = {
-        id : 0,
         timestamp : Date.now(),
-        nombre : request.body.nombre,
-        descripcion : request.body.descripcion,
-        codigo : request.body.codigo,
-        precio : request.body.precio,
-        foto : request.body.foto,
-        stock : request.body.stock,
+        nombre : req.body.nombre,
+        descripcion : req.body.descripcion,
+        codigo : req.body.codigo,
+        precio : req.body.precio,
+        foto : req.body.foto,
+        stock : req.body.stock,
     }
 
     Producto.add('productos', newProducto)
@@ -52,14 +51,13 @@ const postProducto = (req, res) => {
 const updateProducto = (req, res) => {
     
     const producto = {
-        id : 0,
         timestamp : Date.now(),
-        nombre : request.body.nombre,
-        descripcion : request.body.descripcion,
-        codigo : request.body.codigo,
-        precio : request.body.precio,
-        foto : request.body.foto,
-        stock : request.body.stock,
+        nombre : req.body.nombre,
+        descripcion : req.body.descripcion,
+        codigo : req.body.codigo,
+        precio : req.body.precio,
+        foto : req.body.foto,
+        stock : req.body.stock,
     }
 
     Producto.update('productos', req.params.id, producto)

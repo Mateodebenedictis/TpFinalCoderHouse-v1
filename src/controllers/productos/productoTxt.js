@@ -1,4 +1,4 @@
-const Producto = require('../containers/Producto');
+const Producto = require('../../containers/Producto');
 
 const contenedorProducto = new Producto('productos.txt');
 contenedorProducto.checkIfFileExists();

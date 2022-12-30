@@ -1,13 +1,14 @@
+require('dotenv').config();
 const express = require('express');
+const {mongoDbConnection} = require('./src/database/config');
 const path = require('path');
 
-//Utilizamos Mongo DB
-const productosMongoRouter = require('./src/routers/mongo/productosMongoRouter');
-const carritoMongoRouter = require('./src/routers/mongo/carritoMongoRouter');
+//Conectamos a Mongo DB
+mongoDbConnection();
 
-//Utilizamos Firebase
-const productosFirebaseRouter = require('./src/routers/firebase/productosFirebaseRouter');
-const carritoFirebaseRouter = require('./src/routers/firebase/carritoFirebaseRouter');
+//Import dinamico de router
+const carritoRouter = require('./src/routers/carritoDinamico');
+const productosRouter = require('./src/routers/productosDinamico');
 
 const app = express();
 const port = 8080;
@@ -15,14 +16,9 @@ const port = 8080;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//Extiendo las rutas a /firebase y /mongo para poder utilizarlas
-//Mongo DB
-app.use('/api/mongo/productos', productosMongoRouter);
-app.use('/api/mongo/carrito', carritoMongoRouter);
 
-//Firebase
-app.use('/api/firebase/productos', productosFirebaseRouter);
-app.use('/api/firebase/carrito', carritoFirebaseRouter);
+app.use('/api/carrito', carritoRouter);
+app.use('/api/productos', productosRouter);
 
 
 app.use((req, res) => {

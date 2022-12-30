@@ -1,23 +1,24 @@
-const MongoContainer = require('../../containers/mongo/MongoContainer');
+const ProductoMongoContainer = require('../../containers/ProductoMongoContainer');
 
-const Producto = new MongoContainer();
-
+const Producto = new ProductoMongoContainer();
 
 const getProducto = (req, res) => {
 
     if (!req.params.id) {
 
-        Producto.get('productos')
+        Producto.get()
             .then(productos => {
+
+                console.log(productos)
                 res.json(productos);
             })
             .catch(err => {
                 res.json(err);
             })
-            
+
     } else {
 
-        Producto.get('productos', req.params.id)
+        Producto.get(req.params.id)
             .then(producto => {
                 res.json(producto);
             })
@@ -27,21 +28,21 @@ const getProducto = (req, res) => {
     }
 }
 
-
 const postProducto = (req, res) => {
 
     const newProducto = {
-        id: 0,
         timestamp: Date.now(),
-        nombre: request.body.nombre,
-        descripcion: request.body.descripcion,
-        codigo: request.body.codigo,
-        precio: request.body.precio,
-        foto: request.body.foto,
-        stock: request.body.stock,
+        nombre: req.body.nombre,
+        descripcion: req.body.descripcion,
+        codigo: req.body.codigo,
+        precio: req.body.precio,
+        foto: req.body.foto,
+        stock: req.body.stock,
     }
 
-    Producto.add('productos', newProducto)
+    console.log(newProducto)
+
+    Producto.add(newProducto)
         .then(id => {
             res.json({ id: id });
         })
@@ -53,17 +54,16 @@ const postProducto = (req, res) => {
 const updateProducto = (req, res) => {
 
     const producto = {
-        id: 0,
         timestamp: Date.now(),
-        nombre: request.body.nombre,
-        descripcion: request.body.descripcion,
-        codigo: request.body.codigo,
-        precio: request.body.precio,
-        foto: request.body.foto,
-        stock: request.body.stock,
+        nombre: req.body.nombre,
+        descripcion: req.body.descripcion,
+        codigo: req.body.codigo,
+        precio: req.body.precio,
+        foto: req.body.foto,
+        stock: req.body.stock,
     }
 
-    Producto.update('productos', req.params.id, producto)
+    Producto.update(req.params.id, producto)
         .then(id => {
             res.json({ id: id });
         })
@@ -73,7 +73,8 @@ const updateProducto = (req, res) => {
 }
 
 const deleteProducto = (req, res) => {
-    Producto.delete('productos', req.params.id)
+
+    Producto.delete(req.params.id)
         .then(id => {
             res.json({ id: id });
         })
@@ -82,10 +83,9 @@ const deleteProducto = (req, res) => {
         })
 }
 
-
 module.exports = {
     getProducto,
     postProducto,
     updateProducto,
-    deleteProducto,
-};
+    deleteProducto
+}
